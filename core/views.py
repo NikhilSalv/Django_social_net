@@ -2,8 +2,11 @@ from django.shortcuts import render, HttpResponse, redirect
 from .models import Profile
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+import string
 
 # Create your views here.
+@login_required(login_url='signin')
 def index(request):
     return render(request, 'index.html')
 
@@ -14,6 +17,17 @@ def signup(request):
         password = request.POST["password"]
         confirm_pass = request.POST["confirm_pass"]
 
+        uppercase = any(1 if c in string.ascii_uppercase else 0 for c in password)
+        lowercase = any(1 if c in string.ascii_lowercase else 0 for c in password)
+        special = any(1 if c in string.punctuation else 0 for c in password)
+        digits = any(1 if c in string.digits else 0 for c in password)
+
+        def password_checker(uppercase, lowercase, special, digits):
+            if uppercase & lowercase & special & digits:
+                return True
+            else:
+                return False
+
         if password == confirm_pass:
             if User.objects.filter(username=username).exists():
                 messages.info(request, "Username taken")
@@ -21,7 +35,11 @@ def signup(request):
             if User.objects.filter(email=email).exists():
                 messages.info( request,"Email taken")
                 return redirect('signup')
+                
             else:
+                if password_checker(uppercase, lowercase, special, digits) is False:
+                    messages.info( request,"Password is Weak")
+                    return redirect('signup')
                 user = User.objects.create_user(username=username, email=email, password=password)
                 user.save()
 
@@ -60,7 +78,8 @@ def signin(request):
 
     else:
         return render(request, 'signin.html')
-    
+
+@login_required(login_url='signin')    
 def logout(request):
     auth.logout(request)
     return redirect( 'signin' )
