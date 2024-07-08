@@ -1,0 +1,8 @@
+modules: []
+exclude:
+- .*__pycache__
+- .*egg-info
+- docs
+- tests
+- venv
+source_root: manage.py
