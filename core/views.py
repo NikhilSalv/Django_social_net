@@ -46,40 +46,6 @@ def signup(request):
         return redirect('signup')
 
 
-
-        # def password_checker(uppercase, lowercase, special, digits):
-        #     if uppercase & lowercase & special & digits:
-        #         return True
-        #     else:
-        #         return False
-
-        # if password == confirm_pass:
-        #     if User.objects.filter(username=username).exists():
-        #         messages.info(request, "Username taken")
-        #         return redirect('signup')
-        #     if User.objects.filter(email=email).exists():
-        #         messages.info( request,"Email taken")
-        #         return redirect('signup')
-                
-        #     else:
-        #         # if password_checker(uppercase, lowercase, special, digits) is False:
-        #         #     messages.info( request,"Password is Weak")
-        #         #     return redirect('signup')
-        #         user = User.objects.create_user(username=username, email=email, password=password)
-        #         user.save()
-
-        #         user_model = User.objects.get(username=username)
-        #         profile_user = Profile.objects.create(user=user_model, id_user=user_model.id)
-        #         profile_user.save()
-
-        #         messages.info(request, "Congratulations !! User Created")
-        #         return redirect('signup')
-            
-        
-        # else:
-        #     messages.info(request,"Password does not match")
-        #     return redirect('signup')
-
     else:
         return render(request, 'signup.html')
     
