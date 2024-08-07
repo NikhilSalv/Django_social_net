@@ -5,10 +5,18 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import string
 
+
+
 # Create your views here.
 @login_required(login_url='signin')
 def index(request):
     return render(request, 'index.html')
+
+
+@login_required(login_url='signin')
+def upload(request):
+    return HttpResponse('<h1> Uploaded </h1>')
+
 
 def signup(request):
     if request.method == "POST":
