@@ -17,12 +17,6 @@ def signup(request):
         password = request.POST["password"]
         confirm_pass = request.POST["confirm_pass"]
 
-        def is_strong_password(password):
-            has_upper = any(c.isupper() for c in password)
-            has_lower = any(c.islower() for c in password)
-            has_special = any(c in string.punctuation for c in password)
-            has_digit = any(c.isdigit() for c in password)
-            return has_upper and has_lower and has_special and has_digit
         
         if password != confirm_pass:
             messages.info(request,"Password does not match")
@@ -40,15 +34,26 @@ def signup(request):
                 return redirect('signup')
             
         user = User.objects.create_user(username=username, email=email, password=password)
+        user_login = auth.authenticate(username=username, password=password)
+        auth.login(request, user_login)
+
         Profile.objects.create(user=user, id_user=user.id)
 
-        messages.info(request, "Congratulations !! User Created")
-        return redirect('signup')
+        # messages.info(request, "Congratulations !! User Created")
+        return redirect('settings')
 
 
     else:
         return render(request, 'signup.html')
     
+
+def is_strong_password(password):
+            has_upper = any(c.isupper() for c in password)
+            has_lower = any(c.islower() for c in password)
+            has_special = any(c in string.punctuation for c in password)
+            has_digit = any(c.isdigit() for c in password)
+            return has_upper and has_lower and has_special and has_digit
+
 
 def signin(request):
         
@@ -77,4 +82,28 @@ def logout(request):
 
 @login_required(login_url='signin')
 def settings(request):
-    return render(request,"setting.html")
+    user_profile = Profile.objects.get(user=request.user)
+
+    if request.method == "POST":
+        if request.FILES.get("image") == None:
+            image = user_profile.profile_img
+            bio = request.POST.get("bio")
+            location = request.POST.get("location")
+
+            user_profile.profile_img = image
+            user_profile.bio = bio
+            user_profile.location = location
+            user_profile.save()
+
+        if request.FILES.get("image") != None:
+            image = request.FILES.get("image")
+            bio = request.POST.get("bio")
+            location = request.POST.get("location")
+
+            user_profile.profile_img = image
+            user_profile.bio = bio
+            user_profile.location = location
+            user_profile.save()
+
+        return redirect("settings") 
+    return render(request,"setting.html", {"user_profile" : user_profile})
