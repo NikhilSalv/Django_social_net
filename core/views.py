@@ -10,7 +10,9 @@ import string
 # Create your views here.
 @login_required(login_url='signin')
 def index(request):
-    return render(request, 'index.html')
+    user_object = User.objects.get(username = request.user.username)
+    user_profile = Profile.objects.get(user=request.user)
+    return render(request, 'index.html', {"user_profile": user_profile})
 
 
 @login_required(login_url='signin')
