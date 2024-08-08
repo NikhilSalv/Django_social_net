@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Profile
+from .models import Profile, Post
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,7 +17,22 @@ def index(request):
 
 @login_required(login_url='signin')
 def upload(request):
-    return HttpResponse('<h1> Uploaded </h1>')
+    if request.method == "POST":
+        print("Post updating...")
+        user = request.user.username
+        image = request.FILES.get("image_upload")
+        caption = request.POST.get("caption")
+        print("values fetched ...", caption)
+
+        new_post = Post.objects.create(user=user, caption= caption, image = image)
+        print("Post updated...")
+        new_post.save()
+        print("Post uploaded")
+
+        return redirect("index")
+
+    else:
+        return redirect("index")
 
 
 def signup(request):
