@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Profile, Post
+from .models import Profile, Post, LikedPost
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -10,7 +10,9 @@ import string
 # Create your views here.
 @login_required(login_url='signin')
 def index(request):
+
     user_object = User.objects.get(username = request.user.username)
+
     user_profile = Profile.objects.get(user=request.user)
 
     posts = Post.objects.all()
@@ -34,6 +36,29 @@ def upload(request):
         return redirect("index")
 
     else:
+        return redirect("index")
+
+@login_required(login_url='signin')
+def like_post(request):
+    username = request.user.username
+    post_id = request.GET.get("post_id")
+
+    post = Post.objects.get(id= post_id)
+
+    like_filter = LikedPost.objects.filter(post_id=post_id, username= username).first()
+
+    if like_filter == None:
+        new_like = LikedPost.objects.create(post_id=post_id, username= username)
+        new_like.save()
+
+        post.no_of_likes += 1
+        post.save()
+        return redirect("index")
+    else:
+        like_filter.delete()
+        post.no_of_likes -= 1
+        post.save()
+        print("4 . The Logged in user name in Liked Post is : ", username)
         return redirect("index")
 
 
