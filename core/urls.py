@@ -13,6 +13,8 @@ urlpatterns = [
     path('like-post/',views.like_post, name= 'like-post'),
     path('profile/<str:pk>',views.profile, name= 'profile'),
     path('follow/',views.follow, name= 'follow'),
+    path('search/',views.search, name= 'search'),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

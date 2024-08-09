@@ -108,6 +108,12 @@ def profile(request,pk):
     return render(request, "profile.html", context)
 
 
+def search(request):
+    if request.method == "POST":
+        searched_username = request.POST["username"]
+    return redirect("profile", pk =searched_username)
+
+
 @login_required(login_url='signin')
 def follow(request):
     if request.method == "POST":
