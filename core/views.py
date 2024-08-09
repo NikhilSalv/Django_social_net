@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Profile, Post, LikedPost
+from .models import Profile, Post, LikedPost, FollowCount
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -67,17 +67,55 @@ def profile(request,pk):
     user_object = User.objects.get(username=pk)
     # print("Logged in User is : " , user_object.username)
     user_profile = Profile.objects.get(user=user_object)
-    # print("Logged in User PROFILE name is : " , user_profile.user)
     user_posts = Post.objects.filter(user=pk)
-    # print("Logged in User POST data is : " , user_posts[1].caption)
     user_post_len = len(user_posts)
+
+
+    follower = request.user.username
+    user = pk
+
+    if FollowCount.objects.filter(follower=follower, user=user).first():
+        button_text = "Unfollow"
+    else:
+        button_text = "Follow"
+
+    user_followers = len(FollowCount.objects.filter(user=pk))
+    user_following = len(FollowCount.objects.filter(follower=pk))
+
     context = {
         "user_object" : user_object,
         "user_profile" : user_profile,
         "user_posts" : user_posts,
-        "user_post_len" : user_post_len
+        "user_post_len" : user_post_len,
+        "button_text": button_text,
+        "user_followers": user_followers,
+        "user_following" : user_following
     }
     return render(request, "profile.html", context)
+
+
+@login_required(login_url='signin')
+def follow(request):
+    if request.method == "POST":
+        follower = request.POST["follower"]
+        user = request.POST["user"]
+        print("user is  : ", user, "follower is :", follower)
+
+        if FollowCount.objects.filter(follower = follower, user = user).first():
+            delete_follower = FollowCount.objects.get(follower = follower, user = user)
+            delete_follower.delete()
+            return redirect("profile", pk=user)
+        else:
+            new_follower = FollowCount.objects.create(follower = follower, user = user)
+            new_follower.save()
+            return redirect("profile", pk=user)
+
+        # loggedin_user = User.objects.get(usename=user)
+        # loggedin_user_profile = Profile.objects.get(user=loggedin_user)
+
+    else:
+        return redirect("profile", pk=user)
+
 
 def signup(request):
     if request.method == "POST":
