@@ -61,6 +61,23 @@ def like_post(request):
         print("4 . The Logged in user name in Liked Post is : ", username)
         return redirect("index")
 
+@login_required(login_url='signin')
+def profile(request,pk):
+    print("Data from FE for Logged in User Profile is : " , pk)
+    user_object = User.objects.get(username=pk)
+    # print("Logged in User is : " , user_object.username)
+    user_profile = Profile.objects.get(user=user_object)
+    # print("Logged in User PROFILE name is : " , user_profile.user)
+    user_posts = Post.objects.filter(user=pk)
+    # print("Logged in User POST data is : " , user_posts[1].caption)
+    user_post_len = len(user_posts)
+    context = {
+        "user_object" : user_object,
+        "user_profile" : user_profile,
+        "user_posts" : user_posts,
+        "user_post_len" : user_post_len
+    }
+    return render(request, "profile.html", context)
 
 def signup(request):
     if request.method == "POST":
