@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
+import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -28,7 +30,7 @@ SECRET_KEY = 'django-insecure--=j)t4tjb!_ubjpg0wu(x*35nkhswjn*0=#rt!$2jql!jbt(d0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -124,6 +126,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+django_heroku.settings(locals())
 
 
 # Default primary key field type
