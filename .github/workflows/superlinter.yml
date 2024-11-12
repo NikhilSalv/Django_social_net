@@ -20,4 +20,4 @@ jobs:
           pip install flake8
 
       - name: Run flake8
-        run: flake8 .
+        run: flake8 . --exclude=core/migrations/*,social_book/settings.py
