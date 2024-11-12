@@ -10,7 +10,7 @@ from itertools import chain
 # Create your views here.
 @login_required(login_url='signin')
 def index(request):
-    user_object = User.objects.get(username=request.user.username)
+    # user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=request.user)
 
     user_following_list = []
@@ -27,7 +27,7 @@ def index(request):
 
     feed_list = list(chain(*feed))
 
-    posts = Post.objects.all()
+    # posts = Post.objects.all()
     return render(request, 'index.html', {
         "user_profile": user_profile, "posts": feed_list
         })
@@ -124,12 +124,12 @@ def follow(request):
         print("user is : ", user, "follower is :", follower)
 
         if FollowCount.objects.filter(follower=follower, user=user).first():
-            delete_follower = FollowCount.objects.get(follower=follower, 
+            delete_follower = FollowCount.objects.get(follower=follower,
                                                       user=user)
             delete_follower.delete()
             return redirect("profile", pk=user)
         else:
-            new_follower = FollowCount.objects.create(follower=follower, 
+            new_follower = FollowCount.objects.create(follower=follower,
                                                       user=user)
             new_follower.save()
             return redirect("profile", pk=user)
@@ -160,7 +160,7 @@ def signup(request):
                 messages.info(request, "Password is weak")
                 return redirect('signup')
 
-        user = User.objects.create_user(username=username, 
+        user = User.objects.create_user(username=username,
                                         email=email, password=password)
         user_login = auth.authenticate(username=username, password=password)
         auth.login(request, user_login)
