@@ -60,7 +60,7 @@ def like_post(request):
 
     post = Post.objects.get(id=post_id)
 
-    like_filter = LikedPost.objects.filter(post_id=post_id, 
+    like_filter = LikedPost.objects.filter(post_id=post_id,
                                            username=username).first()
 
     if like_filter is None:
